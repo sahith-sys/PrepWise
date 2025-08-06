@@ -6,7 +6,7 @@ function App() {
 
   return (
     <>
-      <div className='bg-[#F9FAFB] min-h-screen'>
+      <div className=' min-h-screen'>
         <NavBar />
         <Home />
       </div>
