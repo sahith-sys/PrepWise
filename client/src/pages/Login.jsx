@@ -1,9 +1,37 @@
 import React from "react";
+import axios from "axios";
+import { useState } from "react";
 
 function Login() {
-  const handleSubmit = (e) => {
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted");
+    setLoading(true);
+    try {
+      const resp = await axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/auth/login`,{
+        email,
+        password
+      });
+      if(resp.status === 200) {
+        console.log("Login successful", resp.data);
+        localStorage.setItem("token",resp.data.token);
+        localStorage.setItem("user", JSON.stringify(resp.data.user));
+        window.location.href = "/";
+      }
+      else{
+        console.error("Login failed",resp.data.message);
+        alert("Login failed: " + resp.data.message);
+      }
+    } catch (error) {
+      console.error("Login failed",error);
+      alert(error.response?.data?.message || "Something went wrong. Try again!");
+    }finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -18,6 +46,7 @@ function Login() {
           <input
             type="email"
             className="w-full p-2 border border-gray-300 rounded"
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div className="mb-4">
@@ -25,11 +54,12 @@ function Login() {
           <input
             type="password"
             className="w-full p-2 border border-gray-300 rounded"
+            onChange={(e)=> {setPassword(e.target.value)}}
           />
         </div>
         <button
           type="submit"
-          onSubmit={handleSubmit}
+          disabled={loading}
           className="mt-4 p-2 bg-blue-600 text-white rounded cursor-pointer"
         >
           Login

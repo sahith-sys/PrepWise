@@ -7,11 +7,12 @@ import ResumeAnalysis from './pages/ResumeAnalysis'
 import InterviewExperience from './pages/InterviewExperience'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import { AppContextProvider } from './Context/AppContext'
 
 function App() {
 
   return (
-    <>
+    <AppContextProvider>
       <div className=' min-h-screen'>
         <NavBar />
         <Routes>
@@ -23,7 +24,7 @@ function App() {
           <Route path='/signup' element={<Signup />} />
         </Routes>
       </div>
-    </>
+    </AppContextProvider>
   )
 }
 
