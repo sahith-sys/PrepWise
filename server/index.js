@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 3000;
 const cors = require('cors');
 const connectDB = require('./config/mongodb');
 const authRoutes = require('./routes/authRoutes');
+const experienceRoutes = require('./routes/ExperienceRoutes');
 require('dotenv').config();
 
 connectDB();
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/auth', authRoutes);
+app.use('/api/experience', experienceRoutes);
 
 app.get("/", (req,res)=>{
     res.send("Welcome to the PrepWise API");
