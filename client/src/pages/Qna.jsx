@@ -1,19 +1,86 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { ClipLoader } from "react-spinners";
 
 function Qna() {
   const [opencard, setOpenCard] = useState(false);
   const [experience, setExperience] = useState("intern");
   const [salary, setSalary] = useState(120000);
   const [selectedTopics, setSelectedTopics] = useState([]);
+  const [targetCompany, setTargetCompany] = useState("");
+  const [targetRole, setTargetRole] = useState("");
+  const [additionalReq, setAdditionalReq] = useState("");
+
+  const [showSessionCard, setShowSessionCard] = useState(false);
+  const [sessionName, setSessionName] = useState("");
+  const [sessionDescription, setSessionDescription] = useState("");
+  const [allSessions, setAllSessions] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+
+  const pastelColors = [
+    "bg-pink-100 border-pink-200",
+    "bg-blue-100 border-blue-200",
+    "bg-green-100 border-green-200",
+    "bg-yellow-100 border-yellow-200",
+    "bg-purple-100 border-purple-200",
+    "bg-red-100 border-red-200",
+  ];
 
   const topics = {
-    "Data Structures": ["Arrays", "Trees", "Linked Lists", "Graphs", "Stacks", "Queues", "Hash Tables", "Heaps"],
-    Algorithms: ["Sorting", "Searching", "Recursion", "Dynamic Programming", "Greedy Algorithms", "Backtracking", "Divide & Conquer", "Graph Algorithms"],
-    "System Design": ["Scalability", "Distributed Systems", "Database Design", "Caching", "Load Balancing", "Microservices", "API Design", "Message Queues"],
-    "Other Topics": ["OOP", "Databases", "Networking", "OS Concepts", "Concurrency", "Testing", "Security", "Cloud Computing"],
+    "Data Structures": [
+      "Arrays",
+      "Trees",
+      "Linked Lists",
+      "Graphs",
+      "Stacks",
+      "Queues",
+      "Hash Tables",
+      "Heaps",
+    ],
+    Algorithms: [
+      "Sorting",
+      "Searching",
+      "Recursion",
+      "Dynamic Programming",
+      "Greedy Algorithms",
+      "Backtracking",
+      "Divide & Conquer",
+      "Graph Algorithms",
+    ],
+    "System Design": [
+      "Scalability",
+      "Distributed Systems",
+      "Database Design",
+      "Caching",
+      "Load Balancing",
+      "Microservices",
+      "API Design",
+      "Message Queues",
+    ],
+    "Other Topics": [
+      "OOP",
+      "Databases",
+      "Networking",
+      "OS Concepts",
+      "Concurrency",
+      "Testing",
+      "Security",
+      "Cloud Computing",
+    ],
   };
 
-  // Disable background scroll when modal is open
+  const payload = {
+    sessionName,
+    sessionDescription,
+    experience,
+    salary,
+    selectedTopics,
+    targetCompany,
+    targetRole,
+    additionalReq,
+  };
+
   useEffect(() => {
     if (opencard) {
       document.body.style.overflow = "hidden";
@@ -22,28 +89,125 @@ function Qna() {
     }
   }, [opencard]);
 
+  useEffect(() => {
+    getAllSessions();
+  }, []);
+
   const handleTopicChange = (label) => {
     setSelectedTopics((prev) =>
       prev.includes(label) ? prev.filter((t) => t !== label) : [...prev, label]
     );
   };
 
+  function handleSubmit(e) {
+    e.preventDefault();
+    setOpenCard(false);
+    setShowSessionCard(true);
+  }
+
+  async function handleSessionSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const resp = await axios.post(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/qna/create`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (resp.data.success) {
+        alert("Session created successfully!");
+        getAllSessions();
+        setSessionName("");
+        setSessionDescription("");
+        setSelectedTopics([]);
+        setTargetCompany("");
+        setTargetRole("");
+        setAdditionalReq("");
+        setSalary(120000);
+        setExperience("intern");
+      }
+    } catch (error) {
+      console.error("Error while creating session", error);
+      alert(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to create session"
+      );
+    } finally {
+      setLoading(false);
+      setSessionName("");
+      setSessionDescription("");
+    }
+  }
+  async function getAllSessions() {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const resp = await axios.get(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/qna/get`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (resp.data.success) {
+        setAllSessions(resp.data.data);
+        setLoading(false);
+        setShowSessionCard(false);
+      } else {
+        alert("Failed to fetch sessions" + resp.data.message);
+      }
+    } catch (error) {
+      console.error("Error while fetching sessions", error);
+      alert(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to fetch sessions"
+      );
+    }
+  }
+
+  function handleDeleteSession(index) {
+    setAllSessions((prev) => prev.filter((_, i) => i !== index));
+  }
+
   return (
     <div className="min-h-screen border relative">
-      {/* Modal */}
+      {/* Modal for topic selection */}
       {opencard && (
-        <div className="fixed inset-0 z-10 flex items-center justify-center bg-[#7F7F7F] bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+        <form
+          onSubmit={handleSubmit}
+          className="fixed inset-0 z-10 flex items-center justify-center"
+        >
+          <div
+            className="absolute inset-0 bg-black opacity-50"
+            onClick={() => setOpenCard(false)}
+          ></div>
+
+          <div className="relative z-50 bg-white p-6 rounded-lg shadow-lg w-full max-w-xl max-h-[90%] overflow-y-auto">
             <h2 className="text-xl font-semibold mb-4 text-center">
               Select the topics you want to practice:
             </h2>
 
             <div className="text-gray-800">
-              {/* Top row: Target Company & Job Role */}
+              {/* Target Company & Job Role */}
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Target Company</label>
-                  <select className="w-full rounded-md border px-3 py-2">
+                  <label className="block text-sm font-medium mb-2">
+                    Target Company
+                  </label>
+                  <select
+                    required
+                    className="w-full rounded-md border px-3 py-2"
+                    onChange={(e) => setTargetCompany(e.target.value)}
+                  >
                     <option value="">Select a company</option>
                     <option>Google</option>
                     <option>Amazon</option>
@@ -52,8 +216,13 @@ function Qna() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Job Role</label>
-                  <select className="w-full rounded-md border px-3 py-2">
+                  <label className="block text-sm font-medium mb-2">
+                    Job Role
+                  </label>
+                  <select
+                    className="w-full rounded-md border px-3 py-2"
+                    onChange={(e) => setTargetRole(e.target.value)}
+                  >
                     <option value="">Select a role</option>
                     <option>Software Engineer</option>
                     <option>Backend Engineer</option>
@@ -73,7 +242,10 @@ function Qna() {
                     { id: "mid", label: "Mid-Level (2–5 yrs)" },
                     { id: "senior", label: "Senior (5+ yrs)" },
                   ].map((opt) => (
-                    <label key={opt.id} className="flex items-center gap-2 cursor-pointer">
+                    <label
+                      key={opt.id}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
                       <input
                         type="radio"
                         name="experience"
@@ -90,7 +262,9 @@ function Qna() {
 
               {/* Salary */}
               <div className="mt-6">
-                <p className="text-sm font-medium mb-3">Expected Salary Range (USD)</p>
+                <p className="text-sm font-medium mb-3">
+                  Expected Salary Range (USD)
+                </p>
                 <div className="flex items-center gap-4">
                   <input
                     type="range"
@@ -101,19 +275,26 @@ function Qna() {
                     onChange={(e) => setSalary(parseInt(e.target.value, 10))}
                     className="w-full"
                   />
-                  <span className="text-sm font-medium">${salary.toLocaleString()}</span>
+                  <span className="text-sm font-medium">
+                    ${salary.toLocaleString()}
+                  </span>
                 </div>
               </div>
 
-              {/* Technical topics */}
+              {/* Topics */}
               <div className="mt-6">
-                <p className="text-sm font-medium">Technical Topics to Focus On</p>
+                <p className="text-sm font-medium">
+                  Technical Topics to Focus On
+                </p>
                 {Object.entries(topics).map(([group, items]) => (
                   <div key={group} className="mt-4">
                     <p className="mb-2 text-sm font-semibold">{group}</p>
                     <div className="grid gap-x-6 gap-y-3 md:grid-cols-3">
                       {items.map((label) => (
-                        <label key={label} className="flex items-center gap-2 text-sm">
+                        <label
+                          key={label}
+                          className="flex items-center gap-2 text-sm"
+                        >
                           <input
                             type="checkbox"
                             className="h-4 w-4"
@@ -128,11 +309,16 @@ function Qna() {
                 ))}
               </div>
 
+              {/* Additional Requirements */}
               <div className="mt-6">
-                <label className="block text-sm font-medium mb-2">Additional Requirements</label>
+                <label className="block text-sm font-medium mb-2">
+                  Additional Requirements
+                </label>
                 <textarea
                   placeholder="Any specific topics or question types?"
                   className="h-24 w-full resize-y rounded-md border px-3 py-2 text-sm"
+                  value={additionalReq}
+                  onChange={(e) => setAdditionalReq(e.target.value)}
                 />
               </div>
 
@@ -150,7 +336,68 @@ function Qna() {
               </button>
             </div>
           </div>
-        </div>
+        </form>
+      )}
+
+      {/* Modal for session details */}
+      {showSessionCard && (
+        <form
+          className="fixed inset-0 z-10 flex items-center justify-center"
+          onSubmit={handleSessionSubmit}
+        >
+          <div
+            className="absolute inset-0 bg-black opacity-50"
+            onClick={() => setShowSessionCard(false)}
+          ></div>
+          <div className="relative z-50 bg-white p-6 rounded-lg shadow-lg w-full max-w-xl max-h-[90%] overflow-y-auto">
+            <label htmlFor="session-name">Session Name:</label>
+            <input
+              type="text"
+              id="session-name"
+              value={sessionName}
+              placeholder="Google | Software Engineer"
+              onChange={(e) => setSessionName(e.target.value)}
+              className="w-full p-2 border rounded-lg mb-4"
+            />
+            <label htmlFor="session-description">
+              Session Description (2 to 3 sentences):
+            </label>
+            <textarea
+              id="session-description"
+              placeholder="Getting ready for startup tech rounds"
+              rows={2}
+              value={sessionDescription}
+              onChange={(e) => setSessionDescription(e.target.value)}
+              className="w-full p-2 border rounded-lg mb-4"
+            ></textarea>
+            <div className="flex flex-col text-center">
+              <button
+                className="w-full rounded-md bg-blue-600 px-4 py-3 text-white font-medium hover:bg-blue-700 flex items-center justify-center gap-2"
+                disabled={loading}
+              >
+                {loading ? (
+                  <ClipLoader
+                    color="#ffffff"
+                    loading={loading}
+                    size={20}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />
+                ) : (
+                  "Create Session"
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowSessionCard(false)}
+                className="mt-4 text-blue-600 py-2 px-4 rounded hover:underline"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </form>
       )}
 
       {/* Main Page */}
@@ -159,7 +406,8 @@ function Qna() {
           Generate Customised Sessions with your topics
         </h1>
         <p className="text-lg text-gray-600 text-center max-w-xl">
-          Select your topics and let us create a personalized learning experience for you.
+          Select your topics and let us create a personalized learning
+          experience for you.
         </p>
         <div className="flex gap-4 mt-6">
           <button
@@ -168,10 +416,78 @@ function Qna() {
           >
             Generate Session
           </button>
-          <button className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700">
-            Delete Sessions
+          <button
+            className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
+            onClick={() => setAllSessions([])}
+          >
+            Delete All Sessions
           </button>
         </div>
+      </div>
+
+      {/* Sessions List */}
+      <div className="container mx-auto mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {allSessions.map((session, index) => (
+          <div
+            key={index}
+            className="relative border rounded-2xl bg-white shadow-md p-5 flex flex-col justify-between hover:shadow-lg transition"
+          >
+            {/* Delete Button */}
+            <button
+              onClick={() => handleDeleteSession(index)}
+              className="absolute top-3 right-3 text-pink-500 hover:text-red-600"
+            >
+              🗑
+            </button>
+
+            {/* Header */}
+            <div
+              className={`p-4 rounded-lg flex items-center gap-3 ${
+                pastelColors[index % pastelColors.length]
+              }`}
+            >
+              <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center font-bold text-gray-700">
+                {session.sessionName.slice(0, 2).toUpperCase()}
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">{session.sessionName}</h3>
+                <p className="text-sm text-gray-600">
+                  {session.sessionDescription}
+                </p>
+              </div>
+            </div>
+
+            {/* Skills / Topics */}
+            {session.selectedTopics.length > 0 && (
+              <p className="mt-3 text-sm text-gray-500">
+                {session.selectedTopics.join(", ")}
+              </p>
+            )}
+
+            {/* Tags */}
+            <div className="flex flex-wrap gap-2 mt-4">
+              <span className="px-3 py-1 rounded-full border text-xs text-gray-700">
+                Experience: {session.experience}
+              </span>
+              <span className="px-3 py-1 rounded-full border text-xs text-gray-700">
+                Salary: ${session.salary.toLocaleString()}
+              </span>
+              <span className="px-3 py-1 rounded-full border text-xs text-gray-700">
+                {session.targetCompany}
+              </span>
+              <span className="px-3 py-1 rounded-full border text-xs text-gray-700">
+                {session.targetRole}
+              </span>
+            </div>
+
+            {/* Footer */}
+            {session.additionalReq && (
+              <p className="mt-4 text-xs text-gray-500 italic">
+                {session.additionalReq}
+              </p>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

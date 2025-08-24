@@ -100,7 +100,7 @@ function InterviewExperience() {
             onClick={() => setOpenForm(false)}
           ></div>
 
-          {/* Form Box */}
+          {/* Form Box */} 
           <div className="relative z-60 bg-white p-6 rounded-lg shadow-lg w-full max-w-md max-h-[90%] overflow-y-auto">
             <h2 className="text-lg font-bold mb-2">Share Your Experience</h2>
             <form onSubmit={handleSubmit}>
