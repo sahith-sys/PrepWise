@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function Qna() {
   const [opencard, setOpenCard] = useState(false);
@@ -17,6 +18,7 @@ function Qna() {
   const [allSessions, setAllSessions] = useState([]);
 
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const pastelColors = [
     "bg-pink-100 border-pink-200",
@@ -173,10 +175,13 @@ function Qna() {
       );
     }
   }
-
-  function handleDeleteSession(index) {
-    setAllSessions((prev) => prev.filter((_, i) => i !== index));
+  function handleSessionClick(id){
+    navigate(`/session/${id}`);
   }
+
+  /*function handleDeleteSession(index) {
+    setAllSessions((prev) => prev.filter((_, i) => i !== index));
+  }*/
 
   return (
     <div className="min-h-screen border relative">
@@ -430,7 +435,8 @@ function Qna() {
         {allSessions.map((session, index) => (
           <div
             key={index}
-            className="relative border rounded-2xl bg-white shadow-md p-5 flex flex-col justify-between hover:shadow-lg transition"
+            onClick={() => handleSessionClick(session._id)}
+            className="relative border rounded-2xl bg-white shadow-md p-5 flex flex-col justify-between hover:shadow-lg transition cursor-pointer"
           >
             {/* Delete Button */}
             <button

@@ -8,6 +8,7 @@ import InterviewExperience from './pages/InterviewExperience'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import { AppContextProvider } from './Context/AppContext'
+import Session from './pages/session'
 
 function App() {
 
@@ -22,6 +23,8 @@ function App() {
           <Route path='/interview-experiences' element={<InterviewExperience />} />
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
+          <Route path='/session/:id' element={<Session />} />
+          <Route path='*' element={<h1 className='text-center mt-20 text-3xl font-bold'>404 Not Found</h1>} />
         </Routes>
       </div>
     </AppContextProvider>

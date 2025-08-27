@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { type } = require('os');
 
 const interviewExperienceSchema = new mongoose.Schema({
     user: {
@@ -9,6 +10,10 @@ const interviewExperienceSchema = new mongoose.Schema({
     company: {
         type: String,
         required: true,
+    },
+    companyUrl: {
+        type: String,
+        default: "https://w7.pngwing.com/pngs/19/66/png-transparent-logo-brand-building-angle-building-text-thumbnail.png",
     },
     role: {
         type: String,
@@ -37,6 +42,19 @@ const interviewExperienceSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    roundDetails: [
+        {
+            type: {
+                type: String,
+                enum: ['HR', 'Technical', 'Managerial', "Coding", "Aptitude", "System Design", "Behavioral"],
+                required: true,
+            },
+            details: {
+                type: String,
+                required: true,
+            },
+        },
+    ],
     timeline: {
         type: String,
         enum: ['1-2 weeks', '2-4 weeks', '1+ months', '1-2 months', '2-3 months', '3+ months'],

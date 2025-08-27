@@ -10,10 +10,16 @@ function InterviewExperience() {
   const [overallExperience, setOverallExperience] = useState("");
   const [applicationMode, setApplicationMode] = useState("Referral");
   const [timeline, setTimeline] = useState("1-2 weeks");
-  const [jobExperience, setJobExperience] = useState("");
+  const [jobExperience, setJobExperience] = useState("0-1 years");
   const [result, setResult] = useState("Passed");
   const [rounds, setRounds] = useState(3);
   const [experiences, setExperiences] = useState([]);
+  const [openRoundsCard, setOpenRoundsCard] = useState(false);
+  const [roundDetails, setRoundDetails] = useState(
+    Array.from({ length: rounds }, () => ({ type: "HR", details: "" }))
+  );
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [selectedExperience, setSelectedExperience] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,9 +38,11 @@ function InterviewExperience() {
           jobExperience,
           result,
           rounds,
+          roundDetails,
         },
         {
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         }
@@ -42,6 +50,20 @@ function InterviewExperience() {
       if (resp.data.success) {
         alert("Experience submitted successfully!");
         setOpenForm(false);
+        setOpenRoundsCard(false);
+        setCompany("");
+        setRole("");
+        setDifficulty("Easy");
+        setDsaLinks("");
+        setOverallExperience("");
+        setApplicationMode("Referral");
+        setTimeline("1-2 weeks");
+        setJobExperience("0-1 years");
+        setResult("Passed");
+        setRounds(3);
+        setRoundDetails(
+          Array.from({ length: rounds }, () => ({ type: "HR", details: "" }))
+        );
         getExperiences();
       } else {
         alert("Failed to submit experience: " + resp.data.message);
@@ -71,10 +93,25 @@ function InterviewExperience() {
       console.error("Error fetching experiences:", error);
     }
   }
+  const handleRoundChange = (idx, field, value) => {
+    const updated = [...roundDetails];
+    updated[idx][field] = value;
+    setRoundDetails(updated);
+  };
+  const handleSubmitForm = (e) => {
+    e.preventDefault();
+    setOpenForm(false);
+    setOpenRoundsCard(true);
+  };
 
   useEffect(() => {
     getExperiences();
   }, []);
+  useEffect(() => {
+    setRoundDetails(
+      Array.from({ length: rounds }, () => ({ type: "HR", details: "" }))
+    );
+  }, [rounds]);
 
   return (
     <div className="p-6 relative">
@@ -100,10 +137,10 @@ function InterviewExperience() {
             onClick={() => setOpenForm(false)}
           ></div>
 
-          {/* Form Box */} 
+          {/* Form Box */}
           <div className="relative z-60 bg-white p-6 rounded-lg shadow-lg w-full max-w-md max-h-[90%] overflow-y-auto">
             <h2 className="text-lg font-bold mb-2">Share Your Experience</h2>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmitForm}>
               <label htmlFor="company">Company</label>
               <input
                 type="text"
@@ -209,6 +246,7 @@ function InterviewExperience() {
               <textarea
                 rows="4"
                 value={overallExperience}
+                required
                 onChange={(e) => setOverallExperience(e.target.value)}
                 placeholder="Describe your interview experience..."
                 className="w-full p-2 border rounded-lg"
@@ -218,7 +256,80 @@ function InterviewExperience() {
                 <button
                   type="button"
                   className="px-4 py-2 rounded bg-gray-300"
-                  onClick={() => setOpenForm(false)}
+                  onClick={() => {
+                    setOpenForm(false);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                  type="submit"
+                >
+                  Next
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {openRoundsCard && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Background Overlay */}
+          <div
+            className="absolute inset-0 bg-black opacity-50"
+            onClick={() => setOpenForm(false)}
+          ></div>
+          <div className="relative z-60 bg-white p-6 rounded-lg shadow-lg w-full max-w-md max-h-[90%] overflow-y-auto">
+            <h2 className="text-lg font-bold mb-2">Share Your Experience</h2>
+            <form onSubmit={handleSubmit}>
+              {Array.from({ length: rounds }, (_, idx) => (
+                <div key={idx} className="border p-4 rounded-lg mb-4">
+                  <h3 className="font-semibold mb-2">Round {idx + 1}</h3>
+                  <label htmlFor={`roundType${idx}`} className="block mb-1">
+                    Round Type
+                  </label>
+                  <select
+                    id={`roundType${idx}`}
+                    value={roundDetails[idx]?.type}
+                    required
+                    onChange={(e) =>
+                      handleRoundChange(idx, "type", e.target.value)
+                    }
+                    className="w-full p-2 border rounded-lg mb-2"
+                  >
+                    <option value="HR">HR</option>
+                    <option value="Technical">Technical</option>
+                    <option value="Managerial">Managerial</option>
+                    <option value="Coding">Coding</option>
+                    <option value="Aptitude">Aptitude</option>
+                    <option value="System Design">System Design</option>
+                    <option value="Behavioral">Behavioral</option>
+                  </select>
+
+                  <label htmlFor={`roundDetails${idx}`} className="block mb-1">
+                    Details
+                  </label>
+                  <textarea
+                    id={`roundDetails${idx}`}
+                    rows="3"
+                    value={roundDetails[idx]?.details}
+                    onChange={(e) =>
+                      handleRoundChange(idx, "details", e.target.value)
+                    }
+                    className="w-full p-2 border rounded-lg"
+                    placeholder="Describe this round..."
+                    required
+                  ></textarea>
+                </div>
+              ))}
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded bg-gray-300"
+                  onClick={() => {
+                    setOpenRoundsCard(false);
+                  }}
                 >
                   Cancel
                 </button>
@@ -230,6 +341,65 @@ function InterviewExperience() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Drawer Overlay */}
+      {openDrawer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Background overlay */}
+          <div
+            className="absolute inset-0 bg-black bg-opacity-50"
+            onClick={() => setOpenDrawer(false)}
+          />
+
+          {/* Drawer Panel */}
+          <div className="ml-auto relative w-full sm:w-[400px] h-full bg-white shadow-lg p-6 transform transition-transform duration-300 ease-in-out">
+            <button
+              className="absolute top-4 right-4 text-gray-600 hover:text-black"
+              onClick={() => setOpenDrawer(false)}
+            >
+              ✕
+            </button>
+
+            {selectedExperience && (
+              <div className="space-y-4">
+                <h2 className="text-xl font-bold">
+                  {selectedExperience.company} - {selectedExperience.role}
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Difficulty: {selectedExperience.difficulty}
+                </p>
+                <p className="text-gray-700">
+                  {selectedExperience.overallExperience}
+                </p>
+
+                <div className="mt-4">
+                  <h3 className="font-semibold mb-2">Rounds</h3>
+                  {selectedExperience.roundDetails?.map((round, idx) => (
+                    <div
+                      key={idx}
+                      className="border rounded-lg p-3 mb-2 bg-gray-50"
+                    >
+                      <p className="font-medium">
+                        Round {idx + 1}: {round.type}
+                      </p>
+                      <p className="text-sm text-gray-600">{round.details}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {selectedExperience.dsaLinks && (
+                  <div className="mt-4">
+                    <h3 className="font-semibold mb-2">DSA Links</h3>
+                    <p className="text-blue-600 break-words">
+                      {selectedExperience.dsaLinks}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -279,9 +449,18 @@ function InterviewExperience() {
               className="p-4 rounded-lg shadow-lg hover:shadow-xl transition-all cursor-pointer"
             >
               <div className="flex justify-between items-center mb-2">
-                <h2 className="text-lg font-bold">
-                  {exp.company} - {exp.role}
-                </h2>
+                <div>
+                  <div className="flex flex-row gap-2 mb-2">
+                    <div><img src={exp.companyUrl} alt={exp.company} className="w-8 h-8 rounded-full" /></div>
+                    <div><h2 className="text-xl font-bold mb-2">{exp.company}</h2></div>
+                  </div>
+                  <div className="flex gap-1">
+                    <div className="text-[9px] font-semibold text-white border rounded-xl bg-black px-3 py-1">
+                      {exp.role}
+                    </div>
+                    <div className="text-[9px] font-semibold text-white border rounded-xl bg-black px-3 py-1">{`Rounds: ${exp.rounds}`}</div>
+                  </div>
+                </div>
                 <span
                   className={`px-2 py-1 rounded-full text-xs ${
                     exp.difficulty === "Easy"
@@ -294,10 +473,29 @@ function InterviewExperience() {
                   {exp.difficulty}
                 </span>
               </div>
-              <p className="text-gray-600 text-sm">{exp.body}</p>
-              <button className="mt-2 text-blue-600 hover:underline">
-                Read More
-              </button>
+              <p className="text-gray-600 text-sm">{`${exp.body.substring(0,230)}...`}</p>
+              <div className="flex justify-between">
+                <button
+                  className="mt-2 text-blue-600 hover:underline"
+                  onClick={() => {
+                    setSelectedExperience(exp);
+                    setOpenDrawer(true);
+                  }}
+                >
+                  Read More
+                </button>
+                <div
+                  className={`px-2 py-1 text-xs ${
+                    exp.result === "Passed"
+                      ? "text-green-700"
+                      : exp.result === "Pending"
+                      ? "text-yellow-700"
+                      : "text-red-700"
+                  }`}
+                >
+                  {exp.result}
+                </div>
+              </div>
             </div>
           ))}
         </div>
