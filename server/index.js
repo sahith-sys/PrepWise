@@ -7,6 +7,7 @@ const connectDB = require('./config/mongodb');
 const authRoutes = require('./routes/authRoutes');
 const experienceRoutes = require('./routes/ExperienceRoutes');
 const qnaRoutes = require('./routes/QnaRoutes');
+const resumeRoutes = require('./routes/resumeRoutes');
 require('dotenv').config();
 
 connectDB();
@@ -23,6 +24,7 @@ app.use(function(req, res, next) {
 app.use('/api/auth', authRoutes);
 app.use('/api/experience', experienceRoutes);
 app.use('/api/qna', qnaRoutes);
+app.use('/api/resume', resumeRoutes);
 
 app.get("/", (req,res)=>{
     res.send("Welcome to the PrepWise API");

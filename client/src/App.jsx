@@ -9,6 +9,8 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import { AppContextProvider } from './Context/AppContext'
 import Session from './pages/session'
+import ResumeMaker from './pages/ResumeMaker'
+import MyResume from './pages/MyResume'
 
 function App() {
 
@@ -24,6 +26,8 @@ function App() {
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/session/:id' element={<Session />} />
+          <Route path='/create-resume' element={<ResumeMaker />} />
+          <Route path='/my-resume/:id' element={<MyResume />} />
           <Route path='*' element={<h1 className='text-center mt-20 text-3xl font-bold'>404 Not Found</h1>} />
         </Routes>
       </div>

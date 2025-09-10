@@ -1,6 +1,8 @@
 import React from "react";
 import { useState } from "react";
 import { Upload, FileText, Download } from "react-feather";
+import { Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function ResumeAnalysis() {
   const [resume, setResume] = useState(null);
@@ -33,11 +35,13 @@ function ResumeAnalysis() {
         <div>
           <p className="text-gray-600">or</p>
         </div>
-        <div>
-          <button className="flex items-center m-4 gap-2 px-4 py-2 bg-indigo-600 text-white border border-gray-300 rounded-lg hover:bg-indigo-700">
-            <Upload className="w-4 h-4" /> Create Your Own
-          </button>
-        </div>
+        <Link to="/create-resume">
+          <div>
+            <button className="flex items-center m-4 gap-2 px-4 py-2 bg-indigo-600 text-white border border-gray-300 rounded-lg hover:bg-indigo-700">
+              <Upload className="w-4 h-4" /> Create Your Own
+            </button>
+          </div>
+        </Link>
       </div>
 
       {/* Parsed Resume Section */}
@@ -77,14 +81,15 @@ function ResumeAnalysis() {
           </div>
         </div>
       )}
-      
 
       {/* Insights */}
       {score && (
         <div className="container mx-auto">
           <div className="grid sm:grid-cols-3 grid-cols-1 gap-6 text-sm">
             <div className="bg-white rounded-lg p-4 shadow-lg hover:shadow-xl transition">
-              <h2 className="text-xl font-semibold mb-4 text-green-600">Strengths</h2>
+              <h2 className="text-xl font-semibold mb-4 text-green-600">
+                Strengths
+              </h2>
               <ul className="list-disc ml-4 text-gray-700 text-sm sm:text-base">
                 <li>Clear skills section</li>
                 <li>Good tech stack coverage</li>
@@ -95,18 +100,22 @@ function ResumeAnalysis() {
               </ul>
             </div>
             <div className="bg-white rounded-lg p-4 shadow-lg hover:shadow-xl transition">
-              <h2 className="font-semibold mb-4 text-xl text-yellow-600">⚠️ Weaknesses</h2>
+              <h2 className="font-semibold mb-4 text-xl text-yellow-600">
+                ⚠️ Weaknesses
+              </h2>
               <ul className="list-disc ml-4 text-gray-700 text-sm sm:text-base">
                 <li>Missing keywords for job role</li>
                 <li>No measurable achievements</li>
                 <li>Missing keywords for job role</li>
                 <li>No measurable achievements</li>
                 <li>Missing keywords for job role</li>
-                <li>No measurable achievements</li> 
+                <li>No measurable achievements</li>
               </ul>
             </div>
             <div className="bg-white rounded-lg p-4 shadow-lg hover:shadow-xl transition">
-              <h2 className="font-semibold mb-4 text-xl text-blue-600">💡 Suggestions</h2>
+              <h2 className="font-semibold mb-4 text-xl text-blue-600">
+                💡 Suggestions
+              </h2>
               <ul className="list-disc ml-4 text-gray-700 text-sm sm:text-base">
                 <li>Add action verbs in experience</li>
                 <li>Include certifications</li>
@@ -124,7 +133,6 @@ function ResumeAnalysis() {
           </div>
         </div>
       )}
-      
     </div>
   );
 }
