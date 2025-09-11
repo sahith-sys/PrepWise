@@ -185,7 +185,6 @@ function Qna() {
 
   return (
     <div className="min-h-screen border relative">
-      {/* Modal for topic selection */}
       {opencard && (
         <form
           onSubmit={handleSubmit}

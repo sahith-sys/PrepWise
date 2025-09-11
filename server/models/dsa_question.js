@@ -16,7 +16,7 @@ const dsaQuestionSchema = new mongoose.Schema({
 
 const DSAQuestion = mongoose.model("DSAQuestion", dsaQuestionSchema);
 
-async function storeProblems() {
+/*async function storeProblems() {
   for (const company of companyQuestions) {
     for (const link of company.links) {
       try {
@@ -79,6 +79,6 @@ connectDB().then(() => {
     console.log("All problems stored!");
     process.exit(0);
   });
-});
+});*/
 
-module.exports = { DSAQuestion, storeProblems };
+module.exports = { DSAQuestion };

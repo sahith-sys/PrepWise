@@ -63,8 +63,6 @@ async function getAllExperiences(req, res) {
   }
 }
 async function fetchProfileUrl(name) {
-  console.log("Fetching profile URL for:", name);
-  console.log("Request details:", `https://api.logo.dev/search?q=${name}`);
   try {
     const response = await axios.get(`https://api.logo.dev/search?q=${name}`, {
       headers: {
@@ -73,8 +71,6 @@ async function fetchProfileUrl(name) {
     });
     const data = response.data;
     const logoUrl = `https://img.logo.dev/${data[0].domain}?token=pk_Z7P6eHfTTPCGhlR6QrUIzw`;
-    console.log(logoUrl);
-    console.log(response);
     if (response.data && response.data.length > 0) {
       return logoUrl;
     }
