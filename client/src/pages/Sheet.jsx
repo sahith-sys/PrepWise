@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
 
 function CompanyQuestions() {
   const { company } = useParams();
@@ -13,9 +14,30 @@ function CompanyQuestions() {
   }, [company]);
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("progress")) || {};
-    setProgress(saved);
+    getProgress();
   }, []);
+
+  async function getProgress() {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/dsa/get/progress`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (res.data.success) {
+        setProgress(
+          res.data.progress.reduce((acc, id) => {
+            acc[id] = true;
+            return acc;
+          }, {})
+        );
+      } else if(res.data.message === "Unauthorized"){
+        setProgress([]);
+      }
+    } catch (error) {
+      console.error("Error fetching progress:", error);
+    }
+  }
 
   async function getQuestions() {
     try {
@@ -28,10 +50,28 @@ function CompanyQuestions() {
     }
   }
 
-  const toggleProgress = (id) => {
+  const toggleProgress = async (id) => {
     const updated = { ...progress, [id]: !progress[id] };
     setProgress(updated);
-    localStorage.setItem("progress", JSON.stringify(updated));
+    const token = localStorage.getItem("token");
+    if(!token){
+      alert("Login to save your progress!");
+      return;
+    }
+    try {
+      const resp = await axios.post(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/dsa/update/progress`,
+        { progress: updated },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if(resp.data.success){
+        console.log("Progress updated on server");
+      } else {
+        console.error("Failed to update progress on server");
+      }
+    } catch (error) {
+      console.error("Error updating progress:", error);
+    }
   };
 
   const filteredQuestions =
