@@ -144,8 +144,24 @@ async function getSession(req, res) {
   }
 }
 
+async function deleteSession(req, res){
+  const {id} = req.params;
+  const userId = req.userId;
+  try {
+    const session = await Session.findOneAndDelete({_id: id, userId});
+    if(!session){
+      return res.status(404).json({success: false, message: "Session not found"});
+    }
+    return res.status(200).json({success: true, message: "Session deleted successfully"});
+  } catch (error) {
+    console.log("Error deleting Session", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+}
+
 module.exports = {
   createSession,
   getSessions,
   getSession,
+  deleteSession,
 };

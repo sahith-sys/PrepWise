@@ -350,12 +350,12 @@ function InterviewExperience() {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           {/* Background overlay */}
           <div
-            className="absolute inset-0 bg-black bg-opacity-50"
+            className="absolute inset-0 bg-black/50"
             onClick={() => setOpenDrawer(false)}
           />
 
           {/* Drawer Panel */}
-          <div className="ml-auto relative w-full sm:w-[400px] h-full bg-white shadow-lg p-6 transform transition-transform duration-300 ease-in-out">
+          <div className="ml-auto relative w-full sm:w-[400px] h-full bg-white shadow-lg p-6 transform transition-transform duration-300 ease-in-out overflow-y-auto">
             <button
               className="absolute top-4 right-4 text-gray-600 hover:text-black"
               onClick={() => setOpenDrawer(false)}
