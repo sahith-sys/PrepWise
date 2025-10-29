@@ -1,9 +1,12 @@
 
-# Knowledge Base Search Engine
+# PrepWise
 
 PrepWise is an AI-powered interview preparation platform that helps users master coding interviews and behavioral rounds through personalized quizzes, analytics, and resume insights.
 
 Built for aspiring developers, PrepWise combines AI-generated question banks, company-specific DSA sheets, and real-time progress analytics to make interview preparation smarter and more efficient.
+
+# Tech Stack
+<img width="1000" height="550" alt="image" src="https://github.com/user-attachments/assets/c20c9be9-6499-4893-bf75-e77088d52d13" />
 
 
 ## Features
