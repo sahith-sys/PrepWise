@@ -1,13 +1,20 @@
 import axios from "axios";
-import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 function Session() {
   const { id } = useParams();
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(false);
   const [openIndex, setOpenIndex] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const navigate = useNavigate();
+  const sessionId = id;
+
+  const handleStartQuiz = () => {
+    navigate(`/quiz/${sessionId}`);
+  }
 
   async function getSession() {
     try {
@@ -125,6 +132,11 @@ function Session() {
           </p>
         )}
       </div>
+      <button onClick={handleStartQuiz} className="mt-6 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300">
+        <h2 className="flex items-center justify-center gap-2">
+          Take Quiz <span><ArrowRight size={15} /></span>
+        </h2>
+      </button>
     </div>
   );
 }

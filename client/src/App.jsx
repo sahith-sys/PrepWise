@@ -8,11 +8,12 @@ import InterviewExperience from './pages/InterviewExperience'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import { AppContextProvider } from './Context/AppContext'
-import Session from './pages/session'
+import Session from './pages/Session'
 import ResumeMaker from './pages/ResumeMaker'
 import MyResume from './pages/MyResume'
 import CompanySelection from './pages/CompanySelection'
 import Sheet from './pages/Sheet'
+import QuizPage from './pages/QuizPage'
 
 function App() {
 
@@ -32,6 +33,7 @@ function App() {
           <Route path='/my-resume/:id' element={<MyResume />} />
           <Route path='/dsa' element={<CompanySelection />} />
           <Route path='/sheet/:company' element={<Sheet />} />
+          <Route path='/quiz/:sessionId' element={<QuizPage />} />
           <Route path='*' element={<h1 className='text-center mt-20 text-3xl font-bold'>404 Not Found</h1>} />
         </Routes>
       </div>
