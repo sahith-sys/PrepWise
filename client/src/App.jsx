@@ -14,6 +14,7 @@ import MyResume from './pages/MyResume'
 import CompanySelection from './pages/CompanySelection'
 import Sheet from './pages/Sheet'
 import QuizPage from './pages/QuizPage'
+import User from './pages/User'
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
           <Route path='/dsa' element={<CompanySelection />} />
           <Route path='/sheet/:company' element={<Sheet />} />
           <Route path='/quiz/:sessionId' element={<QuizPage />} />
+          <Route path='/user/:userId' element={<User />} />
           <Route path='*' element={<h1 className='text-center mt-20 text-3xl font-bold'>404 Not Found</h1>} />
         </Routes>
       </div>

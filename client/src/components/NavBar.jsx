@@ -1,10 +1,31 @@
 import React, { useContext, useState } from "react";
 import { AppContext } from "../Context/AppContext";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 function NavBar() {
   const { user } = useContext(AppContext);
   const [isOpen, setIsOpen] = useState(false);
+
+  async function handleProfileClick() {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    try {
+      const resp = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/auth/getUserId`, {
+        headers: {
+          "Content-Type": "application/json",
+           Authorization: `Bearer ${token}`,
+        }
+      });
+      const userId = resp.data.userId;
+      if(resp.data.success){
+        window.location.href = `/user/${userId}`;
+      }
+    } catch (error) {
+      console.error("Error fetching user ID:", error);
+      alert("Failed to fetch user ID. Please try again.");
+    }
+  }
 
   return (
     <div className="bg-white shadow-md">
@@ -52,7 +73,7 @@ function NavBar() {
 
         <div className="hidden md:flex items-center space-x-4">
           {user ? (
-            <button className="cursor-pointer">
+            <button className="cursor-pointer" onClick={handleProfileClick}>
               <div className="bg-white rounded-full p-1">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                   viewBox="0 0 24 24" strokeWidth={1.5}

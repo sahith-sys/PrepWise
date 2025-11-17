@@ -17,6 +17,12 @@ const verifyToken = async (req, res, next) => {
         return res.status(500).json({error: "Internal server error"});
     }
 }
+
+function getUserId(req, res){
+    return res.status(200).json({success:true, userId: req.userId});
+}
+
 module.exports = {
-    verifyToken
+    verifyToken,
+    getUserId
 }

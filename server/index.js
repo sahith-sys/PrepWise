@@ -11,6 +11,7 @@ const resumeRoutes = require('./routes/resumeRoutes');
 const dsaRoutes = require('./routes/DsaRoutes');
 const atsResumeRoutes = require('./routes/atsResumeRoutes');
 const quizRoutes = require('./routes/quizRoutes');
+const userDashboardRoutes = require('./routes/userDashboardRoutes');
 require('dotenv').config();
 
 connectDB();
@@ -31,6 +32,8 @@ app.use('/api/resume', resumeRoutes);
 app.use('/api/dsa', dsaRoutes);
 app.use('/api/atsresume', atsResumeRoutes);
 app.use('/api/quiz', quizRoutes);
+app.use('/api/userDashboard', userDashboardRoutes)
+
 
 app.get("/", (req,res)=>{
     res.send("Welcome to the PrepWise API");

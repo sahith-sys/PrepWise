@@ -352,7 +352,7 @@ function Qna() {
 
               <div className="mt-6">
                 <button className="w-full rounded-md bg-blue-600 px-4 py-3 text-white font-medium hover:bg-blue-700">
-                  <span className="mr-2">✏️</span>Generate Questions
+                  <span className="mr-2"></span>Generate Questions
                 </button>
               </div>
 
